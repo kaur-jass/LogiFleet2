@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import logo from "../assets/logo.png";
 import truck from "../assets/truck.png";
+import { useTheme } from "../context/ThemeContext";
 
 // Role options: label shown to the user, value sent to the backend
 const ROLE_OPTIONS = [
@@ -27,20 +28,10 @@ const ROLE_OPTIONS = [
   { label: "Financial Analyst", value: "FINANCIAL_ANALYST" },
 ];
 
-export default function AuthForm({ 
-  isDarkMode: propIsDarkMode, 
-  setIsDarkMode: propSetIsDarkMode, 
-  isRegister: propIsRegister, 
-  setIsRegister: propSetIsRegister 
-}) {
+export default function AuthForm() {
   // Local state fallbacks in case props are not passed by react-router-dom
-  const [localDarkMode, setLocalDarkMode] = useState(true);
-  const [localRegister, setLocalRegister] = useState(false);
-
-  const isDarkMode = propIsDarkMode !== undefined ? propIsDarkMode : localDarkMode;
-  const setIsDarkMode = propSetIsDarkMode || setLocalDarkMode;
-  const isRegister = propIsRegister !== undefined ? propIsRegister : localRegister;
-  const setIsRegister = propSetIsRegister || setLocalRegister;
+  const { isDarkMode, setIsDarkMode } = useTheme();
+  const [isRegister, setIsRegister] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -351,9 +342,6 @@ export default function AuthForm({
                 <input type="checkbox" className="w-3.5 h-3.5 rounded border-slate-300 text-[#F5B301] accent-[#F5B301]" />
                 {isRegister ? 'Accept terms' : 'Remember me'}
               </label>
-              {!isRegister && (
-                <a href="#forgot" className="font-semibold text-[#B8860B] hover:underline transition-colors">Forgot password?</a>
-              )}
             </div>
 
             {error && (

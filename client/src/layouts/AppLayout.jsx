@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import { useTheme } from "../context/ThemeContext";
 
 // Premium styled loading spinner fallback
 function PageLoader() {
@@ -17,13 +18,20 @@ function PageLoader() {
 
 export default function AppLayout() {
   const location = useLocation();
-  
+  const { isDarkMode } = useTheme();
+
   // Hide layout sidebars and navbars on authentication screens
   const isAuthPage = location.pathname === "/" || location.pathname === "/auth";
 
   if (isAuthPage) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex items-center justify-center p-4">
+      <div
+        className={`min-h-screen flex items-center justify-center p-4 transition-all duration-300 ${
+          isDarkMode
+            ? "bg-[#0B0B0B] text-white"
+            : "bg-white text-black"
+        }`}
+      >
         <Suspense fallback={<PageLoader />}>
           <Outlet />
         </Suspense>
@@ -32,7 +40,13 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div
+        className={`min-h-screen transition-all duration-300 ${
+          isDarkMode
+            ? "bg-[#0B0B0B] text-white"
+            : "bg-white text-black"
+        }`}
+      >
       <div className="flex min-h-screen">
         <Sidebar />
         <div className="flex-1">
