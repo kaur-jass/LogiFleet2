@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import { successResponse, errorResponse } from "../utils/response.js";
+import { createNotification } from "../services/notificationService.js";
 
 // GET /api/trips
 export const getTrips = async (req, res) => {
@@ -93,6 +94,14 @@ export const createTrip = async (req, res) => {
       },
     });
 
+    await createNotification({
+      title: "Trip Created",
+      message: `Trip from ${trip.source} to ${trip.destination} has been created.`,
+      type: "TRIP",
+      priority: "MEDIUM",
+      actionUrl: `/trips?tripId=${trip.id}`,
+      entityId: trip.id,
+    });
     return successResponse(res, { trip }, 201);
   } catch (error) {
     console.error("CreateTrip Error:", error);
@@ -177,6 +186,15 @@ export const dispatchTrip = async (req, res) => {
       return updatedTrip;
     });
 
+    await createNotification({
+      title: "Trip Dispatched",
+      message: `Trip from ${result.source} to ${result.destination} has been dispatched.`,
+      type: "TRIP",
+      priority: "HIGH",
+      actionUrl: `/trips?tripId=${result.id}`,
+      entityId: result.id,
+    });
+
     return successResponse(res, { trip: result }, 200);
   } catch (error) {
     console.error("DispatchTrip Error:", error);
@@ -248,6 +266,15 @@ export const completeTrip = async (req, res) => {
       return updatedTrip;
     });
 
+    await createNotification({
+      title: "Trip Completed",
+      message: `Trip from ${result.source} to ${result.destination} completed successfully.`,
+      type: "TRIP",
+      priority: "MEDIUM",
+      actionUrl: `/trips?tripId=${result.id}`,
+      entityId: result.id,
+    });
+
     return successResponse(res, { trip: result }, 200);
   } catch (error) {
     console.error("CompleteTrip Error:", error);
@@ -303,6 +330,14 @@ export const cancelTrip = async (req, res) => {
       return updatedTrip;
     });
 
+    await createNotification({
+      title: "Trip Cancelled",
+      message: `Trip from ${result.source} to ${result.destination} has been cancelled.`,
+      type: "TRIP",
+      priority: "HIGH",
+      actionUrl: `/trips?tripId=${result.id}`,
+      entityId: result.id,
+    });
     return successResponse(res, { trip: result }, 200);
   } catch (error) {
     console.error("CancelTrip Error:", error);

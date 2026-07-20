@@ -3,6 +3,7 @@ import {
   successResponse,
   errorResponse,
 } from "../utils/response.js";
+import { createNotification } from "../services/notificationService.js";
 
 // ==============================
 // CREATE VEHICLE
@@ -10,6 +11,15 @@ import {
 export const createVehicle = async (req, res) => {
   try {
     const vehicle = await vehicleService.createVehicle(req.body);
+
+    await createNotification({
+      title: "Vehicle Added",
+      message: `${vehicle.name} (${vehicle.regNumber}) has been added to the fleet.`,
+      type: "VEHICLE",
+      priority: "MEDIUM",
+      actionUrl: `/vehicles?vehicleId=${vehicle.id}`,
+      entityId: vehicle.id,
+    });
 
     return successResponse(
       res,
@@ -107,6 +117,15 @@ export const updateVehicle = async (req, res) => {
       req.body
     );
 
+    await createNotification({
+      title: "Vehicle Updated",
+      message: `${vehicle.name} (${vehicle.regNumber}) has been updated.`,
+      type: "VEHICLE",
+      priority: "LOW",
+      actionUrl: `/vehicles?vehicleId=${vehicle.id}`,
+      entityId: vehicle.id,
+    });
+
     return successResponse(res, {
       vehicle,
     });
@@ -135,9 +154,18 @@ export const deleteVehicle = async (req, res) => {
       req.params.id
     );
 
+    await createNotification({
+      title: "Vehicle Retired",
+      message: `${vehicle.name} (${vehicle.regNumber}) has been retired from the fleet.`,
+      type: "VEHICLE",
+      priority: "HIGH",
+      actionUrl: `/vehicles?vehicleId=${vehicle.id}`,
+      entityId: vehicle.id,
+    });
+
     return successResponse(res, {
       vehicle,
-    });
+});
   } catch (error) {
     const statusMap = {
       NOT_FOUND: 404,

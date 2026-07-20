@@ -11,6 +11,8 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
 import maintenanceRoutes from "./routes/maintenanceRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { invalidateCacheMiddleware } from "./middleware/cacheMiddleware.js";
 
@@ -37,6 +39,9 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/drivers", driverRoutes);
 app.use("/api/maintenance", maintenanceRoutes); 
+app.use("/api/search", searchRoutes);
+app.use("/api/notifications", notificationRoutes);
+
 app.get("/", (req, res) => {
 
   res.json({

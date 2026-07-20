@@ -13,7 +13,7 @@ export default function Table({ columns, data }) {
         </thead>
         <tbody>
           {data.map((row, index) => (
-            <tr key={index} className="border-b border-slate-200 last:border-b-0 dark:border-slate-800">
+            <tr id={row.id} key={row.id} className="border-b border-slate-200 last:border-b-0 dark:border-slate-800">
               {columns.map((column) => (
                 <td key={column.key} className="p-4 text-slate-700 dark:text-slate-300">
                   {column.render ? column.render(row) : row[column.key]}

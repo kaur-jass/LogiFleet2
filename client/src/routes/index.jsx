@@ -64,6 +64,30 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      // {
+      //   path: "drivers",
+      //   element: (
+      //     <ProtectedRoute>
+      //       <DriversPage />
+      //     </ProtectedRoute>
+      //   ),
+      // },
+      // {
+      //   path: "vehicles",
+      //   element: (
+      //     <ProtectedRoute>
+      //       <VehiclesPage />
+      //     </ProtectedRoute>
+      //   ),
+      // },
+      // {
+      //   path: "maintenance",
+      //   element: (
+      //     <ProtectedRoute>
+      //       <MaintenancePage />
+      //     </ProtectedRoute>
+      //   ),
+      // },
     ],
   },
 ]);

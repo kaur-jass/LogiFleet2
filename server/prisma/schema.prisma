@@ -53,6 +53,22 @@ enum ExpenseType {
   OTHER
 }
 
+enum NotificationType {
+  TRIP
+  VEHICLE
+  DRIVER
+  FUEL
+  MAINTENANCE
+  EXPENSE
+  SYSTEM
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 // ---------- Models ----------
 
 model User {
@@ -183,4 +199,30 @@ model Expense {
 
   @@index([vehicleId])
   @@map("expenses")
+}
+
+
+model Notification {
+  id          String @id @default(uuid())
+
+  title       String
+  message     String
+
+  type        NotificationType
+
+  priority    NotificationPriority @default(MEDIUM)
+
+  isRead      Boolean @default(false)
+
+  actionUrl   String?
+
+  entityId    String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([isRead])
+  @@index([type])
+  @@index([createdAt])
+
+  @@map("notifications")
 }

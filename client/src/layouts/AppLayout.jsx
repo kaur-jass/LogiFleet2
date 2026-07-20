@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -19,6 +19,7 @@ function PageLoader() {
 export default function AppLayout() {
   const location = useLocation();
   const { isDarkMode } = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Hide layout sidebars and navbars on authentication screens
   const isAuthPage = location.pathname === "/" || location.pathname === "/auth";
@@ -48,9 +49,14 @@ export default function AppLayout() {
         }`}
       >
       <div className="flex min-h-screen">
-        <Sidebar />
+        <Sidebar
+          mobileOpen={mobileOpen}
+          setMobileOpen={setMobileOpen}
+        />
         <div className="flex-1">
-          <Navbar />
+          <Navbar
+            onToggleSidebar={() => setMobileOpen(true)}
+          />
           <main className="p-4 sm:p-6 lg:p-8">
             <Suspense fallback={<PageLoader />}>
               <Outlet />

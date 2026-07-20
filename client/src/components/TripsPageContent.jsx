@@ -5,6 +5,7 @@ import Badge from './Badge';
 import Button from './Button';
 import API from '../api/axios';
 import { getTrips, createTrip, dispatchTrip, completeTrip, cancelTrip } from '../services/tripService';
+import { useSearchParams } from "react-router-dom";
 
 const statusVariant = {
   DRAFT: 'info',
@@ -21,7 +22,7 @@ export default function TripsPageContent() {
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
-  const [selectedTripId, setSelectedTripId] = useState(null);
+  const [activeTripId, setActiveTripId] = useState(null);
 
   // Form list options
   const [availableDrivers, setAvailableDrivers] = useState([]);
@@ -49,6 +50,9 @@ export default function TripsPageContent() {
   const [filterStatus, setFilterStatus] = useState('');
   const [role, setRole] = useState('');
 
+  const [searchParams] = useSearchParams();
+  const selectedTripId = searchParams.get("tripId");
+
   // Load Trips
   const loadTrips = async () => {
     setLoading(true);
@@ -67,6 +71,25 @@ export default function TripsPageContent() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+      if (!selectedTripId || trips.length === 0) return;
+
+      const row = document.getElementById(selectedTripId);
+
+      if (row) {
+          row.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+          });
+
+          row.classList.add("ring-2", "ring-yellow-400");
+
+          setTimeout(() => {
+              row.classList.remove("ring-2", "ring-yellow-400");
+          }, 3000);
+      }
+  }, [trips, selectedTripId]);
 
   useEffect(() => {
     loadTrips();
@@ -134,7 +157,7 @@ export default function TripsPageContent() {
   };
 
   const openCompleteModal = (id) => {
-    setSelectedTripId(id);
+    setActiveTripId(id);
     setCompleteForm({
       actualDistance: '',
       fuelConsumed: '',
@@ -147,7 +170,7 @@ export default function TripsPageContent() {
   const handleCompleteSubmit = async (e) => {
     e.preventDefault();
     try {
-      await completeTrip(selectedTripId, {
+      await completeTrip(activeTripId, {
         actualDistance: parseFloat(completeForm.actualDistance),
         fuelConsumed: parseFloat(completeForm.fuelConsumed),
         finalOdometer: parseFloat(completeForm.finalOdometer),

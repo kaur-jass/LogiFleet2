@@ -9,7 +9,23 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
+    const saved = localStorage.getItem("theme");
+
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, [isDarkMode]);
 
   return (
