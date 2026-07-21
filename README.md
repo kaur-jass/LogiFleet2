@@ -1,285 +1,252 @@
-<div align="center">
+# LogiFleet: Enterprise Fleet & Logistics Management System
 
-# 🚚 LogiFleet
-
-### Intelligent Fleet & Logistics Management Platform
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=node.js" alt="NodeJS" />
-  <img src="https://img.shields.io/badge/Framework-Express-black?style=for-the-badge&logo=express" alt="Express" />
-  <img src="https://img.shields.io/badge/ORM-Prisma-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
-  <img src="https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Auth-JWT-orange?style=for-the-badge" alt="JWT" />
-  <img src="https://img.shields.io/badge/UI-TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
-</p>
+LogiFleet is a full-stack fleet management platform designed to digitize asset lifecycle workflows, dispatch logic, operational compliance, and cost accounting. Built with React, Node.js, Express, Prisma ORM, and PostgreSQL, the platform replaces fragmented manual tracking systems with a unified, role-based REST API and intuitive management interface.
 
 ---
 
-### Enterprise Fleet Management System for Modern Logistics Companies
-**Manage Vehicles • Drivers • Trips • Maintenance • Fuel • Expenses • Reports • Analytics**
+## Table of Contents
+
+- [Overview](#overview)
+- [Problem Statement](#problem-statement)
+- [Architecture & Design Decisions](#architecture--design-decisions)
+- [Key Features](#key-features)
+- [Role-Based Access Control (RBAC)](#role-based-access-control-rbac)
+- [Technology Stack](#technology-stack)
+- [System Architecture & Workflows](#system-architecture--workflows)
+- [Database Architecture](#database-architecture)
+- [API Specification](#api-specification)
+- [Security & Validation](#security--validation)
+- [Performance Optimization](#performance-optimization)
+- [Directory Structure](#directory-structure)
+- [Roadmap](#roadmap)
+- [Contributors & License](#contributors--license)
 
 ---
 
-</div>
+## Overview
 
-# 📖 Table of Contents
-- [Introduction](#-introduction)
-- [Problem Statement](#-problem-statement)
-- [Existing System vs Proposed Solution](#-existing-system-vs-proposed-solution)
-- [Objectives](#-objectives)
-- [Key Features](#-key-features)
-- [Role-Based Access Control (RBAC)](#-role-based-access-control-rbac)
-- [Technology Stack](#-technology-stack)
-- [System Architecture & Workflow Design](#-system-architecture--workflow-design)
-- [Database Architecture](#-database-architecture)
-- [API Documentation](#-api-documentation)
-- [Security & Request Validation](#-security--request-validation)
-- [Performance Optimizations](#-performance-optimizations)
-- [Project Layout](#-project-layout)
-- [Future Enhancements](#-future-enhancements)
-- [Contributors & License](#-contributors--license)
+Modern fleet operations require precise coordination across asset management, driver scheduling, preventive maintenance, fuel auditing, and financial accounting. Organizations relying on spreadsheets and legacy software frequently run into operational bottlenecks, compliance risks, and untracked financial leakages.
+
+LogiFleet consolidates core logistics functions into a single system. It ensures that trip dispatches adhere strictly to capacity limits and driver compliance, tracks vehicle state transitions, logs operational expenses, and provides actionable business metrics.
 
 ---
 
-# 🚛 Introduction
+## Problem Statement
 
-Fleet management is one of the most critical components of modern logistics and transportation industries. Organizations managing fleets of vehicles often struggle with maintaining accurate records of drivers, vehicle utilization, maintenance schedules, fuel consumption, operational costs, and overall business analytics.
+Logistics operators encounter several systemic challenges without integrated management tools:
 
-Traditional fleet management systems rely heavily on spreadsheets, manual records, disconnected software solutions, and human intervention. These methods introduce delays, increase operational costs, and make data-driven decision-making difficult.
-
-**LogiFleet** is a modern full-stack Fleet Management System that digitizes the complete fleet lifecycle. It enables organizations to efficiently manage vehicles, drivers, maintenance activities, trips, fuel usage, expenses, and reports while ensuring secure access through Role-Based Access Control (RBAC). 
-
-The application is built using **React**, **Node.js**, **Express.js**, **Prisma ORM**, and **PostgreSQL**, following a scalable layered architecture suitable for enterprise-grade deployments.
-
----
-
-# ❗ Problem Statement
-
-Logistics companies today face numerous operational challenges that impact productivity, efficiency, and profitability:
-* **Manual Vehicle Management:** Vehicle information is typically stored in Excel sheets or physical registers, making it difficult to track availability, maintenance history, and utilization rates.
-* **Driver Mismanagement:** Organizations struggle to monitor driver license expirations, active availabilities, safety metrics, and historical trip logs.
-* **Poor Maintenance Tracking:** Maintenance schedules are often managed reactively rather than proactively, resulting in delayed servicing, unexpected on-road breakdowns, and high asset depreciation.
-* **Fuel Leakage & Cost Tracking:** Without centralized, trip-tied logging, fuel expenses become difficult to audit, introducing severe vulnerabilities to operational financial losses.
-* **Lack of Business Intelligence:** Managers cannot accurately determine critical Key Performance Indicators (KPIs) such as Fleet Utilization rates, Vehicle ROI, exact Operational Cost-per-mile, Fuel Efficiency metrics, and Driver Productivity profiles.
-* **Weak Security:** Legacy systems lack granular authentication and authorization mechanisms, exposing highly sensitive logistics data to unauthorized eyes.
+1. **Unstructured Asset Tracking:** Vehicle status, maintenance history, and assignment records stored in disparate sheets lead to poor utilization visibility.
+2. **Compliance & Driver Risk:** Inability to dynamically enforce driver license validity checks, safety scores, and duty hour restrictions prior to trip dispatch.
+3. **Unmonitored Maintenance Schedules:** Reactive maintenance practices increase operational downtime, road failure risks, and long-term asset depreciation.
+4. **Expense Accounting Gaps:** Fuel logs and trip expenses without strict foreign-key linkage to specific trips or assets result in unchecked operational costs.
+5. **Lack of Auditable Security:** Systems without fine-grained access control expose operational and financial data to unauthorized access.
 
 ---
 
-# 🔍 Existing System vs Proposed Solution
+## Architecture & Design Decisions
 
-### The Legacy Landscape
-`[Vehicle Register] ➔ [Excel Sheets] ➔ [Phone Coordination] ➔ [Paper Invoices] ➔ [Manual Reports] ➔ [No Analytics]`
+LogiFleet follows a decoupled, layered client-server model designed for scalability, maintainability, and predictable performance:
 
-❌ Duplicate Data Entry & Silos | ❌ Extreme Human Error Margin | ❌ Blind Spot Trip Tracking | ❌ High Operational Waste
+```text
+[ React SPA Frontend ]
+       │  (HTTPS / JWT)
+       ▼
+[ Node.js + Express API Engine ]
+       │
+       ├── Middleware (Auth Authentication, RBAC Guard, Input Validation)
+       │
+       ├── Service / Controller Layer (Business Logic)
+       │
+       └── Prisma ORM (Type-Safe Query Layer)
+               │
+               ▼
+      [ PostgreSQL Engine ]
+  ```
 
-### The LogiFleet Ecosystem
-LogiFleet provides a centralized digital control platform that automates fleet operations out of a single secure engine.
 
-✔ Unified Asset Registries | ✔ Predictive Status Control | ✔ Algorithmic Validations | ✔ Native Core Cost Analytics
+  ### Key Architectural Standards
 
----
-
-# 🎯 Objectives
-
-* **Digitize & Centralize Fleet Operations:** Eliminate manual tracking workflows and unify historical data into a secure engine.
-* **Maximize Fleet Utilization:** Gain deep visibility into which vehicles are generating revenue versus sitting idle.
-* **Minimize Vehicle Downtime:** Leverage automated maintenance tracking loops to pull vehicles into the shop before catastrophic failure occurs.
-* **Ensure Operational Compliance:** Automatically cross-examine driver status indicators and license dates before keys leave the depot.
-* **Track Granular Costs:** Gain immediate insights into exact operational costs driven by fuel, maintenance, and auxiliary trip expenses.
-
----
-
-# ✨ Key Features
-
-* 🔐 **Identity Infrastructure:** JWT-backed state authentication built on top of secure `bcrypt` password hashing algorithms.
-* 👥 **Role-Based Access Control (RBAC):** Restrict core API domains to specific organizational positions (Fleet Manager, Driver, Safety Officer, Financial Analyst).
-* 🚚 **Vehicle Lifecycle Management:** Full CRUD handling for vehicle inventories mapped against concrete tracking states (`AVAILABLE`, `ON_TRIP`, `IN_SHOP`, `RETIRED`).
-* 👨‍✈️ **Driver Registry Controls:** Tracks legal licensing credentials, current operational status, and dynamic safety scores.
-* 🚛 **Algorithmic Trip Dispatching:** Automated verification loops checking driver availability, vehicle capacity, cargo restrictions, and licensing validity prior to trip confirmation.
-* 🛠️ **Integrated Log Systems:** Separate functional modules for managing maintenance records, fuel purchases, and overall operational expenses (tolls, spare parts).
-* 📈 **Dashboard BI & CSV Reporting:** Live dashboard computing fundamental fleet health metrics with integrated reporting handlers allowing clean exports to CSV.
+* **Decoupled API Layer:** Clear separation between controller handlers and core service logic simplifies testing and maintenance.
+* **Strict Runtime Validation:** Request payloads are validated at the API route boundary before hitting controller or service code.
+* **Type Safety:** Schema definitions in Prisma generate static types across the application, reducing runtime type errors.
+* **Soft Deletion Pattern:** Core entities preserve historical and audit trail compliance using logical soft-delete flags rather than hard SQL deletions.
 
 ---
 
-# 🔐 Role-Based Access Control (RBAC)
+## Key Features
 
-| Feature | Fleet Manager | Driver | Safety Officer | Financial Analyst |
+* **Authentication & Identity:** Stateless, short-lived JSON Web Token (JWT) issuing backed by `bcrypt` password hashing.
+* **Granular RBAC:** Route-level middleware enforcing permissions across operational roles (`MANAGER`, `DRIVER`, `SAFETY`, `ANALYST`).
+* **Asset Lifecycle Engine:** Vehicle inventory state machine handling state transitions (`AVAILABLE`, `ON_TRIP`, `IN_SHOP`, `RETIRED`).
+* **Driver Management:** Tracking of license numbers, expiration dates, safety ratings, and current duty status.
+* **Validated Trip Dispatch:** Pre-dispatch validation verifying vehicle capacity, driver availability, cargo weight compliance, and license validity.
+* **Maintenance & Expense Logs:** Isolated logging domains tied directly to specific vehicles and trips for cost attribution.
+* **Operational Reporting:** Real-time metrics calculations and structured CSV generation for financial and operational analysis.
+
+---
+
+## Role-Based Access Control (RBAC)
+
+Access permissions are enforced strictly via server-side middleware based on authenticated user roles:
+
+| Action / Capability | Fleet Manager | Driver | Safety Officer | Financial Analyst |
 | :--- | :---: | :---: | :---: | :---: |
-| **Register / Edit Vehicle** | ✅ | ❌ | ❌ | ❌ |
-| **Soft Delete Vehicle** | ✅ | ❌ | ❌ | ❌ |
-| **Register Driver Profiles** | ✅ | ❌ | ✅ | ❌ |
-| **Suspend Driver Licenses** | ❌ | ❌ | ✅ | ❌ |
-| **Create / Dispatch Trips** | ✅ | ✅ | ❌ | ❌ |
-| **Submit Fuel & Expense Logs** | ✅ | ✅ | ❌ | ❌ |
-| **View Financial Reports** | ✅ | ❌ | ❌ | ✅ |
-| **Export Operational Data** | ✅ | ❌ | ❌ | ✅ |
+| **Manage Vehicles (Create/Edit)** | Yes | No | No | No |
+| **Soft Delete Assets** | Yes | No | No | No |
+| **Manage Driver Profiles** | Yes | No | Yes | No |
+| **Manage Driver License Status** | No | No | Yes | No |
+| **Create & Dispatch Trips** | Yes | Yes | No | No |
+| **Log Fuel & Operational Expenses** | Yes | Yes | No | No |
+| **Access Financial Analytics** | Yes | No | No | Yes |
+| **Export Operational Datasets** | Yes | No | No | Yes |
 
 ---
 
-# 🛠 Technology Stack
+## Technology Stack
 
 ### Frontend Architecture
-* **React & Vite:** Component-driven presentation layer paired with an ultra-fast build pipeline.
-* **TailwindCSS:** Utility-first interface styling optimized for quick UI construction.
-* **Axios:** Context-aware HTTP client with automated interceptors managing authentication tokens.
-* **Recharts:** Flexible, lightweight visualization engines powering dashboard analytics.
+* **UI Framework:** React with Vite build tooling
+* **Styling:** Tailwind CSS
+* **HTTP Client:** Axios with dynamic request/response interceptors
+* **Data Visualization:** Recharts
 
 ### Backend Architecture
-* **Node.js & Express.js:** Asynchronous, decoupled REST API environment optimized for fast transaction response speeds.
-* **Prisma ORM:** Type-safe database client providing predictable queries and explicit relationship declarations.
-* **PostgreSQL:** Advanced object-relational database structure ensuring extreme ACID data consistency.
-* **Zod:** Runtime validation schemas verifying network layer inputs before hitting database logic.
+* **Runtime Environment:** Node.js
+* **Web Framework:** Express.js
+* **Database ORM:** Prisma ORM
+* **Input Validation:** Zod
+* **Authentication:** JSON Web Tokens (`jsonwebtoken`) & `bcrypt`
+
+### Database Engine
+* **Database Engine:** PostgreSQL
 
 ---
 
-# 🏗 System Architecture & Workflow Design
+## System Architecture & Workflows
 
-### High-Level Architecture (HLD)
+### High-Level Architecture Diagram
 
-<p align="center">
-  <img src="docs/images/system-architecture.jpeg" width="900" alt="LogiFleet Enterprise System Architecture Diagram" />
-</p>
+![LogiFleet System Architecture](docs/images/system-architecture.jpeg)
 
-`[React Frontend] ➔ (HTTPS REST API / JWT) ➔ [Express Route Handler] ➔ [Zod Validation Layer] ➔ [Service / Controller Domain] ➔ [Prisma Client] ➔ [PostgreSQL Engine]`
-
-### Core Workflow Cycles
+### Core Operational Workflows
 
 #### 1. Trip Execution Lifecycle
-`[Draft Generated] ➔ [Verify Vehicle & Driver Availabilities] ➔ [Check Cargo Capacities] ➔ [Dispatched: Vehicle/Driver status → ON_TRIP] ➔ [Completed: Status → AVAILABLE]`
+```text
+[Draft Created] ──► [Validate Driver & Vehicle Rules] ──► [Dispatched (ON_TRIP)] ──► [Completed (AVAILABLE)]
+```
+
+```text
+[Vehicle Flagged] ──► [Create Maintenance Ticket (IN_SHOP)] ──► [Repairs Logged] ──► [Close Ticket (AVAILABLE)]
+```
 
 #### 2. Maintenance Lifecycle
-`[Vehicle Flagged] ➔ [Create Log Entry] ➔ [Status shifts → IN_SHOP] ➔ [Repairs Logged] ➔ [Close Request] ➔ [Status shifts → AVAILABLE]`
+```text
+[Vehicle Flagged] ──► [Create Maintenance Ticket (IN_SHOP)] ──► [Repairs Logged] ──► [Close Ticket (AVAILABLE)]
+```
 
 ---
 
-# 🗄 Database Architecture
+## Database Architecture
 
-LogiFleet utilizes a highly relational PostgreSQL architecture, using the Prisma Client for type-safe execution.
+LogiFleet utilizes a relational PostgreSQL architecture managed dynamically with type-safe execution via Prisma ORM.
 
-<p align="center">
-  <img src="docs/images/er-diagram.jpeg" width="750" alt="LogiFleet Entity Relationship Diagram" />
-</p>
+### Entity Relationship Diagram
 
-### Prisma Schema Definition Overview
+![LogiFleet Entity Relationship Diagram](docs/images/er-diagram.jpeg)
 
-#### `User`
-* `id` (UUID, PK) | `email` (String, Unique) | `passwordHash` (String) | `role` (Enum: `MANAGER`, `DRIVER`, `SAFETY`, `ANALYST`)
+### Schema Models & Entities
 
-#### `Vehicle`
-* `id` (UUID, PK) | `vin` (String, Unique) | `model` (String) | `capacity` (Float) | `status` (Enum: `AVAILABLE`, `ON_TRIP`, `IN_SHOP`, `RETIRED`)
-
-#### `Driver`
-* `id` (UUID, PK) | `licenseNumber` (String, Unique) | `expiryDate` (DateTime) | `safetyScore` (Int) | `status` (Enum: `AVAILABLE`, `ON_TRIP`, `OFF_DUTY`, `SUSPENDED`)
-
-#### `Trip`
-* `id` (UUID, PK) | `vehicleId` (FK) | `driverId` (FK) | `source` (String) | `destination` (String) | `status` (Enum: `DRAFT`, `DISPATCHED`, `COMPLETED`, `CANCELLED`)
-
-#### `FuelLog` / `MaintenanceLog` / `Expense`
-* Tied directly to `Vehicle` and `Trip` contexts via target foreign key fields to ensure detailed operational cost attribution.
+* **User**: `id` (UUID, PK) | `email` (String, Unique) | `passwordHash` (String) | `role` (Enum: `MANAGER`, `DRIVER`, `SAFETY`, `ANALYST`)
+* **Vehicle**: `id` (UUID, PK) | `vin` (String, Unique) | `model` (String) | `capacity` (Float) | `status` (Enum: `AVAILABLE`, `ON_TRIP`, `IN_SHOP`, `RETIRED`)
+* **Driver**: `id` (UUID, PK) | `licenseNumber` (String, Unique) | `expiryDate` (DateTime) | `safetyScore` (Int) | `status` (Enum: `AVAILABLE`, `ON_TRIP`, `OFF_DUTY`, `SUSPENDED`)
+* **Trip**: `id` (UUID, PK) | `vehicleId` (FK) | `driverId` (FK) | `source` (String) | `destination` (String) | `status` (Enum: `DRAFT`, `DISPATCHED`, `COMPLETED`, `CANCELLED`)
+* **FuelLog / MaintenanceLog / Expense**: Foreign-key linked directly to `Vehicle` and `Trip` models for aggregate financial cost attribution.
 
 ---
 
-# 🔗 API Documentation
+## API Specification
 
 ### Authentication Domain
-* `POST /api/auth/register` - Creates a new corporate user profile.
-* `POST /api/auth/login` - Validates user credentials and issues short-lived JWT signatures.
-* `GET /api/auth/me` - Validates active bearer token signatures and returns contextual profile data.
+* `POST /api/v1/auth/register` — Create a new enterprise account.
+* `POST /api/v1/auth/login` — Validate credentials and issue JWT signature.
+* `GET  /api/v1/auth/me` — Retrieve active profile session payload.
 
 ### Fleet & Assets Domain
-* `GET /api/vehicles` - Returns a paginated index of fleet entries with custom region/status filtering options.
-* `POST /api/vehicles` - Creates a new vehicle asset within the global inventory database. *(Requires Manager Role)*
-* `PATCH /api/vehicles/:id` - Dynamic updates to asset states (e.g., manually putting a truck `IN_SHOP`).
-* `DELETE /api/vehicles/:id` - Performs an intentional soft-delete to hide the vehicle from operational loops while preserving data safety.
+* `GET    /api/v1/vehicles` — Paginated index of vehicles with status and region filters.
+* `POST   /api/v1/vehicles` — Register a new vehicle entity *(Manager only)*.
+* `PATCH  /api/v1/vehicles/:id` — Dynamically update vehicle state or specs.
+* `DELETE /api/v1/vehicles/:id` — Perform a soft-delete on a vehicle asset.
 
-### Logistics Management Domain
-* `POST /api/trips` - Creates a `DRAFT` trip record. Run validation protocols against target components.
-* `POST /api/trips/:id/dispatch` - Confirms a trip, switching assigned driver and vehicle statuses to `ON_TRIP`.
-* `POST /api/trips/:id/complete` - Ends a trip, capturing actual distance figures, updating odometers, and freeing up drivers and vehicles back to `AVAILABLE`.
-
----
-
-# 🔒 Security & Request Validation
-
-### Network Layer Security
-* **JWT Authorization Filters:** API routers isolate functional modules behind customized authentication evaluation middleware.
-* **Granular RBAC Guards:** Middleware intercepts queries to confirm that incoming payloads match the privileges assigned to the user's role.
-
-### Strict Validation Rules (Zod Schemas)
-* **Vehicles:** Enforces specific alphanumeric structures on VIN strings, requiring positive floating-point values for load limits and vehicle costs.
-* **Drivers:** Validates that license expiry inputs sit cleanly in future chronological windows.
-* **Trips:** Runs automated cross-entity checks before confirming a trip:
-
-$$\text{Trip Allowed} = (\text{Driver Available} \land \text{Vehicle Available} \land \text{Driver License Valid} \land \text{Cargo Weight} \le \text{Vehicle Capacity})$$
+### Logistics & Operations Domain
+* `POST /api/v1/trips` — Initialize a draft trip record.
+* `POST /api/v1/trips/:id/dispatch` — Validate compliance rules and switch trip status to `DISPATCHED`.
+* `POST /api/v1/trips/:id/complete` — Conclude trip, capture final odometers, and restore asset statuses to `AVAILABLE`.
 
 ---
 
-# ⚡ Performance Optimizations
+## Security & Validation
 
-* **Database Indexing Strategics:** Custom indexes applied across frequently filtered fields (`vehicleId`, `driverId`, `tripStatus`) to accelerate query performance.
-* **Prisma Subquery Selectors:** Queries specify exact required datasets to avoid large `SELECT *` lookups and keep payloads lightweight.
-* **Soft Delete Filters:** Global entity queries run through customized Prisma middleware filters that exclude soft-deleted records by default, keeping queries quick.
+### Request Validation
+Incoming REST request payloads are validated at the route boundary using Zod runtime schemas.
+
+#### Dispatch Validation Rule Logic
+To successfully dispatch a trip, the service engine validates state constraints according to the following condition:
+
+Dispatch Valid = (Driver Available) AND (Vehicle Available) AND (License Valid) AND (Cargo Weight <= Vehicle Capacity)
+
+### Middleware Pipeline
+* **JWT Extractor:** Decodes signature headers and attaches the verified user context to request objects.
+* **RBAC Guard:** Checks the active session scope against specified route permission lists.
+* **Error Interceptor:** Handles application exceptions gracefully without exposing raw database exceptions.
 
 ---
 
-# 📂 Project Layout
+## Performance Optimization
+
+* **Database Indexing:** Compound indexes applied on frequently filtered query fields (`vehicleId`, `driverId`, `status`).
+* **Selective Subquery Projection:** Queries explicitly request needed field sets to minimize payload overhead and prevent unnecessary full-table scans.
+* **Soft Delete Middleware:** Global query extensions exclude soft-deleted entities automatically from standard queries.
+* **Server Caching Engine:** Strategic query caching layer reduces execution latency on high-frequency analytics and KPI calls.
+
+---
+
+## Directory Structure
 
 ```text
 LogiFleet/
-|── README.md 
-├── client/                 # React SPA Client
+├── client/                     # Frontend SPA Layer
 │   ├── src/
-│   │   ├── components/     # Reusable UI Elements (Buttons, Inputs, Modals)
-│   │   ├── pages/          # Primary Views (Dashboard, Vehicles, Fleet Tracking)
-│   │   ├── services/       # Axios API Communication Classes
-│   │   └── routes/         # RBAC Guarded Page Router Setup
-└── server/                 # Express REST Engine
-    ├── controllers/        # Express Route Interceptors
-    ├── services/           # Decoupled Core Business Logic Modules
-    ├── middleware/         # Token Parsers, RBAC Guards, Error Catchers
-    ├── validators/         # Zod Request Validation Specs
-    └── prisma/             # Schema Engine Files & Migration History
-
+│   │   ├── components/         # Reusable UI Components
+│   │   ├── pages/              # Main Application Views
+│   │   ├── services/           # Axios Client API Services
+│   │   └── routes/             # RBAC Guarded Route Setup
+│   └── package.json
+└── server/                     # Express REST Engine
+├── controllers/            # Route Handlers
+├── services/               # Core Business Logic
+├── middleware/             # Authentication & Validation Guards
+├── validators/             # Zod Validation Specs
+├── prisma/                 # ORM Schema & Migration History
+└── package.json
 ```
+---
 
-# ⚡ Performance Optimizations
+## Roadmap
 
-* **Server-Side Caching Layer:** Implemented custom caching mechanisms to eliminate repetitive database queries, drastically lowering API latency and reducing load on the database engine.
-* **Database Indexing Strategies:** Custom indexes applied across frequently filtered fields (`vehicleId`, `driverId`, `tripStatus`) to accelerate query execution speeds.
-* **Prisma Subquery Selectors:** Queries explicitly specify required datasets to avoid expensive `SELECT *` lookups and keep network payloads lightweight.
-* **Soft Delete Filters:** Global entity queries run through customized Prisma middleware filters that exclude soft-deleted records by default, keeping index scans highly efficient.
-
-# 🌱 Future Enhancements
-
-* 📍 **Real-Time Telematics:** Live GPS integrations paired with custom geofencing alerts using the Google Maps API.
-* 🧠 **Predictive AI Maintenance:** Machine Learning workflows tracking vehicle analytics to catch asset degradation ahead of time.
-* 📲 **Driver Mobile Application:** Dedicated native companion apps featuring turn-by-turn routing and optical character recognition (OCR) camera captures for automated fuel receipt processing.
-* ⚡ **High-Speed Caching:** Layering Redis engines over high-read analytical paths to scale system responsiveness under high operational loads.
+- [ ] **GPS Telematics Integration:** Continuous location updates using real-time GPS telemetry streams.
+- [ ] **Automated Geofencing:** System-generated alerts on route deviations or unauthorized stops.
+- [ ] **Predictive Maintenance ML:** Machine-learning models predicting component wear derived from historical usage patterns.
+- [ ] **Driver Mobile Application:** Native companion app for drivers with OCR receipt processing and route navigation.
 
 ---
 
-# 👥 Contributors
+## Contributors & License
 
-| Contributor | Organizational Role Focus |
-| :--- | :--- |
-| **Jaspreet Kaur** | Data Architecture / API Engine Lead |
-| **Manan Bansal** | Authentication / Validation Pipeline Engineer |
-| **Simran Maurya** | State Management / Core View Architecture |
-| **Maninder Saini** | Visualization UI / Responsive Design Engineer |
+### Contributors
+* **Jaspreet Kaur** — Data Architecture & API Lead
+* **Manan Bansal** — Authentication & Validation Pipeline Engineer
+* **Simran Maurya** — State Management & Core View Architect
+* **Maninder Saini** — Visualization UI & Responsive Interface Engineer
 
----
-
-# 📜 License
-
-This project is licensed under the terms of the open-source **MIT License**.
-
----
-
-<div align="center">
-
-### 🚚 LogiFleet — Smart Fleet Infrastructure for Smarter Logistics Operations
-Built with ❤️ by the LogiFleet Open-Source Community. **If this boilerplate accelerates your workflow, consider giving the repository a star!** ⭐
-
-</div>
+### License
+This project is open-source software licensed under the terms of the [MIT License](LICENSE).
