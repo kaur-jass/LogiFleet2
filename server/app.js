@@ -23,7 +23,15 @@ console.log("DATABASE_URL prefix:", process.env.DATABASE_URL?.substring(0, 15));
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://logi-fleet2.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
