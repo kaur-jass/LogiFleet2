@@ -91,38 +91,38 @@ export default function VehiclesPageContent() {
   return (
     <div className="space-y-6 font-sans pb-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-bold text-white">Vehicle Fleet</h1>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white">Vehicle Fleet</h1>
         <Button onClick={() => setShowModal(true)}>Add Vehicle</Button>
       </div>
 
       {loading ? (
-        <div className="p-8 text-center text-xs text-slate-400">Loading Vehicles...</div>
+        <div className="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Loading Vehicles...</div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="w-full overflow-x-auto">
           <Table columns={columns} data={vehicles} />
         </div>
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0b0f19] p-6 text-white shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-6 text-slate-900 dark:text-white shadow-2xl transition-colors">
             <h2 className="mb-4 text-base font-bold">Add New Vehicle</h2>
-            <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+            <form onSubmit={handleSubmit} className="space-y-3 text-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="mb-1 block text-slate-400">Vehicle Name</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Vehicle Name</label>
                   <input
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-slate-400">Reg Number</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Reg Number</label>
                   <input
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.regNumber}
                     onChange={(e) => setFormData({ ...formData, regNumber: e.target.value })}
                   />
@@ -131,19 +131,19 @@ export default function VehiclesPageContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="mb-1 block text-slate-400">Model</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Model</label>
                   <input
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.model}
                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-slate-400">Type</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Type</label>
                   <input
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   />
@@ -152,32 +152,32 @@ export default function VehiclesPageContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="mb-1 block text-slate-400">Max Capacity (kg)</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Max Capacity (kg)</label>
                   <input
                     type="number"
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.maxLoadCapacity}
                     onChange={(e) => setFormData({ ...formData, maxLoadCapacity: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-slate-400">Acquisition Cost (₹)</label>
+                  <label className="mb-1 block text-xs text-slate-600 dark:text-slate-400">Acquisition Cost (₹)</label>
                   <input
                     type="number"
                     required
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white outline-none focus:border-[#f5b301]"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-[#f5b301]"
                     value={formData.acquisitionCost}
                     onChange={(e) => setFormData({ ...formData, acquisitionCost: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-2 pt-2">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="rounded-xl border border-slate-800 px-4 py-2 text-slate-400 hover:bg-slate-900"
+                  className="w-full sm:w-auto rounded-xl border border-slate-200 dark:border-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                 >
                   Cancel
                 </button>

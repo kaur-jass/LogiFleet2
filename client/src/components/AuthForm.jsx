@@ -338,7 +338,7 @@ export default function AuthForm() {
             </div>
 
             {error && (
-              <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-600 rounded-lg px-3.5 py-2 text-xs">
+              <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg px-3.5 py-2 text-xs">
                 <AlertCircle size={15} className="mt-0.5 shrink-0" />
                 <span>{error}</span>
               </div>

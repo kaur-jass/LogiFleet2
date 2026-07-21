@@ -27,6 +27,7 @@ import { getDashboardKpis } from "../services/dashboardService";
 import { getTrips } from "../services/tripService";
 import { getFuelLogs } from "../services/fuelService";
 import { getExpenses } from "../services/expenseService";
+import { useTheme } from "../context/ThemeContext";
 
 const statusVariant = {
   DRAFT: "info",
@@ -55,8 +56,8 @@ const columns = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-slate-800 bg-[#0b0f19]/95 p-3 shadow-xl backdrop-blur-md">
-        <p className="text-xs font-semibold text-slate-300">{label}</p>
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0b0f19]/95 p-3 shadow-xl backdrop-blur-md">
+        <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{label}</p>
         {payload.map((entry, index) => (
           <p
             key={`item-${index}`}
@@ -74,6 +75,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function DashboardPageContent() {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
 
   const [kpis, setKpis] = useState(null);
   const [recentTrips, setRecentTrips] = useState([]);
@@ -87,7 +89,15 @@ export default function DashboardPageContent() {
   const expenseData = useMemo(() => dashboardKpis.expenseDistribution, []);
   const revenueData = useMemo(() => dashboardKpis.revenueExpense, []);
 
-  const pieColors = ["#f5b301", "#0ea5e9", "#38bdf8", "#818cf8"];
+  const gridColor = isDarkMode ? "#1e293b" : "#e2e8f0";
+  const axisColor = isDarkMode ? "#64748b" : "#94a3b8";
+
+  const pieColors = [
+    "#f5b301",
+    "#d97706",
+    "#fbbf24",
+    "#fde68a",
+  ];
 
   useEffect(() => {
     async function loadData() {
@@ -121,7 +131,7 @@ export default function DashboardPageContent() {
     return (
       <div className="flex h-64 flex-col items-center justify-center space-y-3 font-sans">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#f5b301] border-t-transparent" />
-        <p className="text-xs font-medium tracking-wide text-slate-400">
+        <p className="text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">
           Loading fleet dashboard...
         </p>
       </div>
@@ -176,26 +186,26 @@ export default function DashboardPageContent() {
               >
                 <defs>
                   <linearGradient id="colorTrips" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#f5b301" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#f5b301" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#1e293b"
+                  stroke={gridColor}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="month"
                   tickLine={false}
                   axisLine={false}
-                  stroke="#64748b"
+                  stroke={axisColor}
                   tick={{ fontSize: 11 }}
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  stroke="#64748b"
+                  stroke={axisColor}
                   tick={{ fontSize: 11 }}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -203,7 +213,7 @@ export default function DashboardPageContent() {
                   type="monotone"
                   dataKey="trips"
                   name="Trips"
-                  stroke="#0ea5e9"
+                  stroke="#f5b301"
                   fill="url(#colorTrips)"
                   strokeWidth={2.5}
                 />
@@ -221,27 +231,27 @@ export default function DashboardPageContent() {
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#1e293b"
+                  stroke={gridColor}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="month"
                   tickLine={false}
                   axisLine={false}
-                  stroke="#64748b"
+                  stroke={axisColor}
                   tick={{ fontSize: 11 }}
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  stroke="#64748b"
+                  stroke={axisColor}
                   tick={{ fontSize: 11 }}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar
                   dataKey="liters"
                   name="Liters"
-                  fill="#38bdf8"
+                  fill="#f5b301"
                   radius={[6, 6, 0, 0]}
                 />
               </BarChart>
@@ -288,20 +298,20 @@ export default function DashboardPageContent() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="#1e293b"
+                    stroke={gridColor}
                     vertical={false}
                   />
                   <XAxis
                     dataKey="month"
                     tickLine={false}
                     axisLine={false}
-                    stroke="#64748b"
+                    stroke={axisColor}
                     tick={{ fontSize: 11 }}
                   />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
-                    stroke="#64748b"
+                    stroke={axisColor}
                     tick={{ fontSize: 11 }}
                   />
                   <Tooltip content={<CustomTooltip />} />
@@ -387,7 +397,7 @@ export default function DashboardPageContent() {
                 <Table columns={columns} data={recentTrips} />
               </div>
             ) : (
-              <div className="p-6 text-center text-xs font-medium text-slate-500">
+              <div className="p-6 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
                 No recent trips logged.
               </div>
             )}
@@ -401,24 +411,24 @@ export default function DashboardPageContent() {
                 recentFuel.map((log) => (
                   <div
                     key={log.id}
-                    className="rounded-xl border border-slate-800/80 bg-[#111827]/80 p-3.5 transition-colors hover:bg-slate-800/50"
+                    className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-[#111827]/80 p-3.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-medium text-slate-400 gap-1">
-                      <span className="text-slate-300">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 gap-1">
+                      <span className="text-slate-700 dark:text-slate-300">
                         Vehicle: {log.vehicleId}
                       </span>
                       <span>{new Date(log.date).toLocaleDateString()}</span>
                     </div>
-                    <div className="mt-1.5 text-xs font-semibold text-slate-200">
+                    <div className="mt-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
                       Station: {log.station} · {log.liters}L ·{" "}
-                      <span className="text-[#f5b301]">
+                      <span className="text-[#B8860B] dark:text-[#f5b301]">
                         ₹{log.cost.toLocaleString()}
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="p-4 text-center text-xs font-medium text-slate-500">
+                <div className="p-4 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
                   No fuel logs recorded.
                 </div>
               )}
@@ -432,24 +442,24 @@ export default function DashboardPageContent() {
                   recentExp.map((expense) => (
                     <div
                       key={expense.id}
-                      className="rounded-xl border border-slate-800/80 bg-[#111827]/80 p-3.5 transition-colors hover:bg-slate-800/50"
+                      className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-[#111827]/80 p-3.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/50"
                     >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-medium text-slate-400 gap-1">
-                        <span className="text-slate-300">{expense.type}</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 gap-1">
+                        <span className="text-slate-700 dark:text-slate-300">{expense.type}</span>
                         <span>
                           {new Date(expense.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <div className="mt-1.5 text-xs font-semibold text-slate-200">
+                      <div className="mt-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
                         Vehicle: {expense.vehicleId} ·{" "}
-                        <span className="text-[#f5b301]">
+                        <span className="text-[#B8860B] dark:text-[#f5b301]">
                           ₹{expense.amount.toLocaleString()}
                         </span>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-xs font-medium text-slate-500">
+                  <div className="p-4 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
                     No recent expenses logged.
                   </div>
                 )}

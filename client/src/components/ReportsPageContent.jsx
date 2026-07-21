@@ -72,12 +72,12 @@ export default function ReportsPageContent() {
   };
 
   const columns = [
-    { key: 'licensePlate', label: 'License Plate', render: (row) => <span className="font-mono font-semibold text-white">{row.regNumber}</span> },
+    { key: 'licensePlate', label: 'License Plate', render: (row) => <span className="font-mono font-semibold text-slate-900 dark:text-white">{row.regNumber}</span> },
     { key: 'makeModel', label: 'Vehicle Details', render: (row) => `${row.name} ${row.model}` },
     { key: 'totalTrips', label: 'Trips Run', render: (row) => row.totalTrips },
     { key: 'totalDistance', label: 'Distance', render: (row) => `${row.totalDistance.toLocaleString()} km` },
     { key: 'fuelEfficiency', label: 'Fuel Efficiency', render: (row) => `${row.fuelEfficiency.toFixed(2)} km/L` },
-    { key: 'roi', label: 'ROI', render: (row) => <span className={row.roi >= 0 ? 'font-semibold text-emerald-400' : 'font-semibold text-rose-400'}>{(row.roi * 100).toFixed(2)}%</span> },
+    { key: 'roi', label: 'ROI', render: (row) => <span className={row.roi >= 0 ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'font-semibold text-rose-600 dark:text-rose-400'}>{(row.roi * 100).toFixed(2)}%</span> },
     {
       key: 'actions',
       label: 'Actions',
@@ -86,7 +86,7 @@ export default function ReportsPageContent() {
           <Button onClick={() => loadVehicleDetail(row.vehicleId)}>View Metrics</Button>
           <button
             onClick={() => handleDownloadCsv('vehicle', row.vehicleId)}
-            className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-700"
+            className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
             CSV
           </button>
@@ -100,13 +100,13 @@ export default function ReportsPageContent() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold tracking-tight text-white">Reports & ROI Analytics</h2>
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Reports & ROI Analytics</h2>
         {isAuthorized && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={() => handleDownloadCsv('trips')}>Export Trips CSV</Button>
             <button
               onClick={() => handleDownloadCsv('fleet')}
-              className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 transition"
+              className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
             >
               Export Fleet CSV
             </button>
@@ -115,9 +115,9 @@ export default function ReportsPageContent() {
       </div>
 
       {!isAuthorized ? (
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-5">
-          <h3 className="text-sm font-bold text-amber-400">Access Restricted</h3>
-          <p className="mt-1 text-xs text-amber-300/80">
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-5">
+          <h3 className="text-sm font-bold text-amber-600 dark:text-amber-400">Access Restricted</h3>
+          <p className="mt-1 text-xs text-amber-700 dark:text-amber-300/80">
             Only Fleet Managers and Financial Analysts are authorized to access reports, single vehicle efficiency summaries, and ROI exports.
           </p>
         </div>
@@ -126,11 +126,13 @@ export default function ReportsPageContent() {
           <div className="xl:col-span-2">
             <Card title="Vehicle Summaries">
               {loading ? (
-                <div className="py-12 text-center text-xs text-slate-400">Loading reports...</div>
+                <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">Loading reports...</div>
               ) : error ? (
-                <div className="py-12 text-center text-xs text-rose-400">{error}</div>
+                <div className="py-12 text-center text-xs text-rose-500 dark:text-rose-400">{error}</div>
               ) : summary.length > 0 ? (
-                <Table columns={columns} data={summary} />
+                <div className="w-full overflow-x-auto">
+                  <Table columns={columns} data={summary} />
+                </div>
               ) : (
                 <div className="py-12 text-center text-xs text-slate-500">No vehicle data available to generate reports.</div>
               )}
@@ -140,54 +142,54 @@ export default function ReportsPageContent() {
           <div className="space-y-6">
             <Card title="Vehicle Inspection Details">
               {loadingDetail ? (
-                <div className="py-12 text-center text-xs text-slate-400">Loading metrics...</div>
+                <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">Loading metrics...</div>
               ) : vehicleDetail ? (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Vehicle Selected</h4>
-                    <p className="mt-0.5 text-base font-bold text-white">
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Vehicle Selected</h4>
+                    <p className="mt-0.5 text-base font-bold text-slate-900 dark:text-white">
                       {vehicleDetail.make} {vehicleDetail.model} ({vehicleDetail.licensePlate})
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">ROI Rating</span>
-                      <p className={`mt-1 text-base font-bold ${vehicleDetail.roi >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 p-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">ROI Rating</span>
+                      <p className={`mt-1 text-base font-bold ${vehicleDetail.roi >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {(vehicleDetail.roi * 100).toFixed(2)}%
                       </p>
                     </div>
-                    <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Utilization</span>
-                      <p className="mt-1 text-base font-bold text-white">
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 p-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Utilization</span>
+                      <p className="mt-1 text-base font-bold text-slate-900 dark:text-white">
                         {vehicleDetail.utilizationPct.toFixed(1)}%
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-2.5 border-t border-slate-800/80 pt-3 text-xs">
+                  <div className="space-y-2.5 border-t border-slate-200 dark:border-slate-800/80 pt-3 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Total Run Distance:</span>
-                      <span className="font-semibold text-white">{vehicleDetail.totalDistance.toLocaleString()} km</span>
+                      <span className="text-slate-500 dark:text-slate-400">Total Run Distance:</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{vehicleDetail.totalDistance.toLocaleString()} km</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Fuel Consumed:</span>
-                      <span className="font-semibold text-white">{vehicleDetail.totalFuelConsumed} L</span>
+                      <span className="text-slate-500 dark:text-slate-400">Fuel Consumed:</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{vehicleDetail.totalFuelConsumed} L</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Total Expenses:</span>
-                      <span className="font-semibold text-white">₹{(vehicleDetail.totalFuelCost + vehicleDetail.totalExpenseCost).toLocaleString()}</span>
+                      <span className="text-slate-500 dark:text-slate-400">Total Expenses:</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">₹{(vehicleDetail.totalFuelCost + vehicleDetail.totalExpenseCost).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Total Revenue:</span>
-                      <span className="font-semibold text-emerald-400">₹{vehicleDetail.totalRevenue.toLocaleString()}</span>
+                      <span className="text-slate-500 dark:text-slate-400">Total Revenue:</span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">₹{vehicleDetail.totalRevenue.toLocaleString()}</span>
                     </div>
                   </div>
 
                   <div className="pt-2">
                     <button
                       onClick={() => handleDownloadCsv('vehicle', vehicleDetail.vehicleId)}
-                      className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 text-xs font-semibold text-slate-200 transition hover:bg-slate-700"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-200 dark:hover:bg-slate-700"
                     >
                       Download CSV Metrics
                     </button>
