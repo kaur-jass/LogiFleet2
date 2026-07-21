@@ -42,22 +42,25 @@ export default function AppLayout() {
 
   return (
     <div
-        className={`min-h-screen transition-all duration-300 ${
-          isDarkMode
-            ? "bg-[#0B0B0B] text-white"
-            : "bg-white text-black"
-        }`}
-      >
-      <div className="flex min-h-screen">
+      className={`min-h-screen w-full max-w-full overflow-x-hidden transition-all duration-300 ${
+        isDarkMode
+          ? "bg-[#0B0B0B] text-white"
+          : "bg-white text-black"
+      }`}
+    >
+      {/* Added max-w-full & overflow-x-hidden to outer container */}
+      <div className="flex min-h-screen w-full max-w-full overflow-x-hidden">
         <Sidebar
           mobileOpen={mobileOpen}
           setMobileOpen={setMobileOpen}
         />
-        <div className="flex-1">
+        
+        {/* CRITICAL FIX: min-w-0 allows the flex item to contract properly */}
+        <div className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden flex flex-col">
           <Navbar
             onToggleSidebar={() => setMobileOpen(true)}
           />
-          <main className="p-4 sm:p-6 lg:p-8">
+          <main className="flex-1 w-full max-w-full min-w-0 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
             <Suspense fallback={<PageLoader />}>
               <Outlet />
             </Suspense>

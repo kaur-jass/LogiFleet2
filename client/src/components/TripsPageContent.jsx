@@ -285,38 +285,38 @@ export default function TripsPageContent() {
   ];
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-6 font-sans pb-10 px-3 sm:px-6">
-      {/* Header Container */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="w-full max-w-full overflow-x-hidden min-w-0 space-y-6 font-sans pb-10 px-4 md:px-6 lg:px-8">
+      {/* Responsive Header Container */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Trips Dashboard
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Monitor, dispatch, and track active logistics trips
           </p>
         </div>
         {(role === "FLEET_MANAGER" || role === "DRIVER") && (
           <Button
             onClick={openCreateModal}
-            className="w-full sm:w-auto bg-[#f5b301] text-slate-950 font-semibold hover:bg-[#e0a200]"
+            className="w-full sm:w-auto bg-[#f5b301] text-slate-950 font-semibold hover:bg-[#e0a200] justify-center"
           >
             + Create New Trip
           </Button>
         )}
       </div>
 
-      {/* Filter Status Pills */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0b0f19] p-3.5 shadow-sm">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      {/* Filter Status Pills - Horizontal Scroll on Narrow Viewports */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0b0f19] p-3.5 shadow-sm overflow-hidden">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0">
           Filter:
         </span>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 w-full">
           {["", "DRAFT", "DISPATCHED", "COMPLETED", "CANCELLED"].map((st) => (
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
                 filterStatus === st
                   ? "bg-[#F5B301] text-slate-950 shadow-sm"
                   : "border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -346,27 +346,27 @@ export default function TripsPageContent() {
         </div>
       ) : (
         <>
-          {/* Desktop & Tablet View (>= 640px): Table inside Card */}
-          <div className="hidden sm:block">
+          {/* Desktop & Laptop View (>= 1024px): Table with bounded horizontal scroll wrap */}
+          <div className="hidden lg:block">
             <Card title="Trips List">
-              <div className="w-full min-w-0 overflow-hidden">
+              <div className="w-full min-w-0 overflow-x-auto">
                 <Table columns={columns} data={trips} />
               </div>
             </Card>
           </div>
 
-          {/* Mobile View (< 640px): Responsive Trip Cards */}
-          <div className="block sm:hidden space-y-3">
+          {/* Mobile & Tablet View (< 1024px): Responsive Trip Cards */}
+          <div className="block lg:hidden space-y-3">
             {trips.map((trip) => (
               <div
                 id={trip.id}
                 key={trip.id}
                 className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-4 text-xs shadow-sm space-y-3 transition-all"
               >
-                {/* Card Header */}
-                <div className="flex items-center justify-between">
+                {/* Mobile Header */}
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
                       {trip.source} → {trip.destination}
                     </h3>
                     <p className="font-mono text-[10px] text-slate-400 mt-0.5">
@@ -380,8 +380,8 @@ export default function TripsPageContent() {
 
                 <hr className="border-slate-100 dark:border-slate-800/80" />
 
-                {/* Details Grid */}
-                <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-slate-300">
+                {/* Grid Details */}
+                <div className="grid grid-cols-2 gap-3 text-slate-600 dark:text-slate-300">
                   <div>
                     <p className="text-[10px] uppercase font-semibold text-slate-400">
                       Vehicle
@@ -423,10 +423,10 @@ export default function TripsPageContent() {
                   </div>
                 </div>
 
-                {/* Card Actions */}
+                {/* Mobile Actions */}
                 {(trip.status === "DRAFT" || trip.status === "DISPATCHED") && (
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
-                    <p className="text-[10px] uppercase font-semibold text-slate-400 mb-1.5">
+                    <p className="text-[10px] uppercase font-semibold text-slate-400 mb-2">
                       Actions
                     </p>
                     {renderActions(trip)}
@@ -441,7 +441,7 @@ export default function TripsPageContent() {
       {/* CREATE TRIP MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-6 text-slate-900 dark:text-white shadow-2xl my-auto transition-colors">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-5 sm:p-6 text-slate-900 dark:text-white shadow-2xl my-auto transition-colors">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold">Create New Trip</h3>
               <button
@@ -592,7 +592,7 @@ export default function TripsPageContent() {
                 </button>
                 <Button
                   type="submit"
-                  className="w-full sm:w-auto bg-[#f5b301] text-slate-950 font-semibold hover:bg-[#e0a200]"
+                  className="w-full sm:w-auto bg-[#f5b301] text-slate-950 font-semibold hover:bg-[#e0a200] justify-center"
                 >
                   Create Trip
                 </Button>
@@ -605,7 +605,7 @@ export default function TripsPageContent() {
       {/* COMPLETE TRIP MODAL */}
       {showCompleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-6 text-slate-900 dark:text-white shadow-2xl my-auto transition-colors">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-5 sm:p-6 text-slate-900 dark:text-white shadow-2xl my-auto transition-colors">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold">Complete Dispatched Trip</h3>
               <button
