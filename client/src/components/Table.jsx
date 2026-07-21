@@ -1,22 +1,46 @@
-export default function Table({ columns, data }) {
+export default function Table({ columns = [], data = [] }) {
+  const tableData = Array.isArray(data) ? data : [];
+
+  console.log("tableData =", tableData);
+  console.log("isArray =", Array.isArray(tableData));
+  console.log("length =", tableData.length);
+
+  if (tableData.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-800/80 bg-[#0b0f19] p-8 text-center text-xs text-slate-500">
+        No records found.
+      </div>
+    );
+  }
+
   return (
-    <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
-        <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+    <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-[#0b0f19] shadow-xl">
+      <table className="min-w-full text-left text-sm text-slate-300">
+        <thead className="border-b border-slate-800 bg-slate-900/60">
           <tr>
-            {columns.map((column) => (
-              <th key={column.key} className="border-b border-slate-200 p-4 font-semibold uppercase tracking-[0.16em] dark:border-slate-800">
-                {column.label}
+            {columns.map((col) => (
+              <th
+                key={col.key}
+                className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400"
+              >
+                {col.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
-          {data.map((row, index) => (
-            <tr id={row.id} key={row.id} className="border-b border-slate-200 last:border-b-0 dark:border-slate-800">
-              {columns.map((column) => (
-                <td key={column.key} className="p-4 text-slate-700 dark:text-slate-300">
-                  {column.render ? column.render(row) : row[column.key]}
+
+        <tbody className="divide-y divide-slate-800/50">
+          {tableData.map((row, index) => (
+            <tr
+              key={row.id ?? index}
+              className="transition-colors hover:bg-slate-900/40"
+            >
+              {columns.map((col) => (
+                <td
+                  key={col.key}
+                  className="px-4 py-3 text-sm text-slate-200"
+                >
+                  {col.render ? col.render(row) : row[col.key]}
                 </td>
               ))}
             </tr>

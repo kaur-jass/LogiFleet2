@@ -13,7 +13,6 @@ export default function FuelPageContent() {
   const [vehicles, setVehicles] = useState([]);
   const [role, setRole] = useState('');
 
-  // Form State
   const [form, setForm] = useState({
     vehicleId: '',
     liters: '',
@@ -74,18 +73,18 @@ export default function FuelPageContent() {
   };
 
   const columns = [
-    { key: 'id', label: 'Log ID', render: (row) => row.id.substring(0, 8) },
+    { key: 'id', label: 'Log ID', render: (row) => <span className="font-mono text-xs text-slate-400">{row.id.substring(0, 8)}</span> },
     { key: 'vehicle', label: 'Vehicle', render: (row) => row.vehicle ? `${row.vehicle.name} [${row.vehicle.regNumber}]` : row.vehicleId.substring(0, 8) },
     { key: 'liters', label: 'Liters (L)', render: (row) => `${row.liters} L` },
-    { key: 'cost', label: 'Cost', render: (row) => `₹${row.cost.toLocaleString()}` },
+    { key: 'cost', label: 'Cost', render: (row) => <span className="font-medium text-[#F5B301]">₹{row.cost.toLocaleString()}</span> },
     { key: 'date', label: 'Date Registered', render: (row) => new Date(row.date).toLocaleDateString() },
     { key: 'trip', label: 'Linked Trip', render: (row) => row.trip ? `${row.trip.source} → ${row.trip.destination}` : 'None' }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Fuel Logs</h2>
+        <h2 className="text-xl font-bold tracking-tight text-white">Fuel Logs</h2>
         {(role === 'FLEET_MANAGER' || role === 'DRIVER') && (
           <Button onClick={openLogModal}>Log Fuel Fill</Button>
         )}
@@ -93,29 +92,31 @@ export default function FuelPageContent() {
 
       <Card title="Fuel Transaction Logs">
         {loading ? (
-          <div className="p-8 text-center text-sm text-slate-500">Loading fuel logs...</div>
+          <div className="py-12 text-center text-xs text-slate-400">Loading fuel logs...</div>
         ) : error ? (
-          <div className="p-8 text-center text-sm text-red-500">{error}</div>
+          <div className="py-12 text-center text-xs text-rose-400">{error}</div>
         ) : fuelLogs.length > 0 ? (
-          <Table columns={columns} data={fuelLogs} />
+          <div className="overflow-x-auto">
+            <Table columns={columns} data={fuelLogs} />
+          </div>
         ) : (
-          <div className="p-8 text-center text-sm text-slate-500">No fuel records logged yet.</div>
+          <div className="py-12 text-center text-xs text-slate-500">No fuel records logged yet.</div>
         )}
       </Card>
 
       {/* LOG FUEL MODAL */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-950">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Log Fuel Transaction</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0b0f19] p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-white">Log Fuel Transaction</h3>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500">Vehicle</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Vehicle</label>
                 <select
                   required
                   value={form.vehicleId}
                   onChange={(e) => setForm({ ...form, vehicleId: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white focus:border-[#F5B301] focus:outline-none"
                 >
                   <option value="">Select a vehicle</option>
                   {vehicles.map(v => (
@@ -124,9 +125,9 @@ export default function FuelPageContent() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Liters (L)</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Liters (L)</label>
                   <input
                     type="number"
                     step="any"
@@ -134,11 +135,11 @@ export default function FuelPageContent() {
                     placeholder="e.g. 45.5"
                     value={form.liters}
                     onChange={(e) => setForm({ ...form, liters: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Total Cost (₹)</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Cost (₹)</label>
                   <input
                     type="number"
                     step="any"
@@ -146,35 +147,41 @@ export default function FuelPageContent() {
                     placeholder="e.g. 3500"
                     value={form.cost}
                     onChange={(e) => setForm({ ...form, cost: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Date</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</label>
                 <input
                   type="date"
                   required
                   value={form.date}
                   onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Linked Trip ID (Optional)</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Linked Trip ID (Optional)</label>
                 <input
                   type="text"
                   placeholder="Paste UUID if linking to active/completed trip"
                   value={form.tripId}
                   onChange={(e) => setForm({ ...form, tripId: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" className="bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700" onClick={() => setShowModal(false)}>Cancel</Button>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800"
+                >
+                  Cancel
+                </button>
                 <Button type="submit">Submit Log</Button>
               </div>
             </form>

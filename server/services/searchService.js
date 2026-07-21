@@ -3,6 +3,7 @@ import prisma from "../lib/prisma.js";
 export const globalSearch = async (query) => {
   const [drivers, vehicles, trips, fuelLogs, expenses] =
     await Promise.all([
+      // ================= Drivers =================
       prisma.driver.findMany({
         where: {
           OR: [
@@ -23,6 +24,7 @@ export const globalSearch = async (query) => {
         take: 5,
       }),
 
+      // ================= Vehicles =================
       prisma.vehicle.findMany({
         where: {
           OR: [
@@ -49,6 +51,7 @@ export const globalSearch = async (query) => {
         take: 5,
       }),
 
+      // ================= Trips =================
       prisma.trip.findMany({
         where: {
           OR: [
@@ -73,6 +76,7 @@ export const globalSearch = async (query) => {
         take: 5,
       }),
 
+      // ================= Fuel Logs =================
       prisma.fuelLog.findMany({
         where: {
           vehicle: {
@@ -98,21 +102,13 @@ export const globalSearch = async (query) => {
         take: 5,
       }),
 
+      // ================= Expenses =================
       prisma.expense.findMany({
         where: {
-          OR: [
-            {
-              description: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-            {
-              type: {
-                equals: query.toUpperCase(),
-              },
-            },
-          ],
+          description: {
+            contains: query,
+            mode: "insensitive",
+          },
         },
         include: {
           vehicle: true,

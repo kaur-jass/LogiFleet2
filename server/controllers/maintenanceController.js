@@ -3,6 +3,7 @@ import {
   successResponse,
   errorResponse,
 } from "../utils/response.js";
+import { createNotification } from "../services/notificationService.js";
 
 // ===================================
 // CREATE MAINTENANCE
@@ -10,6 +11,15 @@ import {
 export const createMaintenance = async (req, res) => {
   try {
     const log = await maintenanceService.createMaintenance(req.body);
+
+    await createNotification({
+      title: "Maintenance Scheduled",
+      message: `${log.type} maintenance scheduled for ${log.vehicle.regNumber}.`,
+      type: "MAINTENANCE",
+      priority: "MEDIUM",
+      actionUrl: `/maintenance?maintenanceId=${log.id}`,
+      entityId: log.id,
+    });
 
     return successResponse(
       res,
@@ -60,6 +70,15 @@ export const getMaintenanceLogs = async (req, res) => {
 export const closeMaintenance = async (req, res) => {
   try {
     const log = await maintenanceService.closeMaintenance(req.params.id);
+
+    await createNotification({
+      title: "Maintenance Completed",
+      message: `${log.type} maintenance completed for ${log.vehicle.regNumber}.`,
+      type: "MAINTENANCE",
+      priority: "LOW",
+      actionUrl: `/maintenance?maintenanceId=${log.id}`,
+      entityId: log.id,
+    });
 
     return successResponse(res, {
       log,

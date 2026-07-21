@@ -19,16 +19,13 @@ export default function TripsPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [activeTripId, setActiveTripId] = useState(null);
 
-  // Form list options
   const [availableDrivers, setAvailableDrivers] = useState([]);
   const [availableVehicles, setAvailableVehicles] = useState([]);
 
-  // Create Trip form state
   const [createForm, setCreateForm] = useState({
     source: '',
     destination: '',
@@ -39,7 +36,6 @@ export default function TripsPageContent() {
     revenue: '',
   });
 
-  // Complete Trip form state
   const [completeForm, setCompleteForm] = useState({
     actualDistance: '',
     fuelConsumed: '',
@@ -53,12 +49,10 @@ export default function TripsPageContent() {
   const [searchParams] = useSearchParams();
   const selectedTripId = searchParams.get("tripId");
 
-  // Load Trips
   const loadTrips = async () => {
     setLoading(true);
     try {
       const res = await getTrips();
-      // Apply client-side status filtering
       const list = res.data?.trips || [];
       if (filterStatus) {
         setTrips(list.filter(t => t.status === filterStatus));
@@ -73,22 +67,22 @@ export default function TripsPageContent() {
   };
 
   useEffect(() => {
-      if (!selectedTripId || trips.length === 0) return;
+    if (!selectedTripId || trips.length === 0) return;
 
-      const row = document.getElementById(selectedTripId);
+    const row = document.getElementById(selectedTripId);
 
-      if (row) {
-          row.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-          });
+    if (row) {
+      row.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
 
-          row.classList.add("ring-2", "ring-yellow-400");
+      row.classList.add("ring-2", "ring-[#F5B301]");
 
-          setTimeout(() => {
-              row.classList.remove("ring-2", "ring-yellow-400");
-          }, 3000);
-      }
+      setTimeout(() => {
+        row.classList.remove("ring-2", "ring-[#F5B301]");
+      }, 3000);
+    }
   }, [trips, selectedTripId]);
 
   useEffect(() => {
@@ -96,7 +90,6 @@ export default function TripsPageContent() {
     setRole(localStorage.getItem('role') || '');
   }, [filterStatus]);
 
-  // Fetch options for creation form
   const openCreateModal = async () => {
     try {
       const [driversRes, vehiclesRes] = await Promise.all([
@@ -184,8 +177,8 @@ export default function TripsPageContent() {
   };
 
   const columns = [
-    { key: 'id', label: 'Trip ID', render: (row) => row.id.substring(0, 8) },
-    { key: 'route', label: 'Route', render: (row) => <span className="font-semibold">{row.source} → {row.destination}</span> },
+    { key: 'id', label: 'Trip ID', render: (row) => <span className="font-mono text-xs text-slate-400">{row.id.substring(0, 8)}</span> },
+    { key: 'route', label: 'Route', render: (row) => <span className="font-semibold text-white">{row.source} → {row.destination}</span> },
     { key: 'status', label: 'Status', render: (row) => <Badge variant={statusVariant[row.status] || 'neutral'}>{row.status}</Badge> },
     { key: 'vehicle', label: 'Vehicle', render: (row) => row.vehicle ? `${row.vehicle.name} [${row.vehicle.regNumber}]` : row.vehicleId.substring(0, 8) },
     { key: 'driver', label: 'Driver', render: (row) => row.driver ? row.driver.name : row.driverId.substring(0, 8) },
@@ -197,45 +190,60 @@ export default function TripsPageContent() {
       render: (row) => {
         if (row.status === 'DRAFT') {
           return (
-            <div className="flex gap-2">
-              <Button size="sm" onClick={() => handleDispatchAction(row.id)}>Dispatch</Button>
-              <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={() => handleCancelAction(row.id)}>Cancel</Button>
+            <div className="flex flex-wrap gap-1.5">
+              <Button onClick={() => handleDispatchAction(row.id)}>Dispatch</Button>
+              <button
+                onClick={() => handleCancelAction(row.id)}
+                className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/20"
+              >
+                Cancel
+              </button>
             </div>
           );
         }
         if (row.status === 'DISPATCHED') {
           return (
-            <div className="flex gap-2">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openCompleteModal(row.id)}>Complete</Button>
-              <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={() => handleCancelAction(row.id)}>Cancel</Button>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => openCompleteModal(row.id)}
+                className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20"
+              >
+                Complete
+              </button>
+              <button
+                onClick={() => handleCancelAction(row.id)}
+                className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/20"
+              >
+                Cancel
+              </button>
             </div>
           );
         }
-        return <span className="text-xs text-slate-400">None</span>;
+        return <span className="text-xs text-slate-500">None</span>;
       }
     }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Trips Dashboard</h2>
+        <h2 className="text-xl font-bold tracking-tight text-white">Trips Dashboard</h2>
         {(role === 'FLEET_MANAGER' || role === 'DRIVER') && (
           <Button onClick={openCreateModal}>Create New Trip</Button>
         )}
       </div>
 
-      <div className="flex items-center gap-4 rounded-3xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
-        <span className="text-sm font-medium text-slate-500">Filter Status:</span>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-slate-800/80 bg-[#0b0f19] p-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Filter:</span>
+        <div className="flex flex-wrap gap-2">
           {['', 'DRAFT', 'DISPATCHED', 'COMPLETED', 'CANCELLED'].map((st) => (
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition ${
+              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
                 filterStatus === st
-                  ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900'
-                  : 'bg-transparent text-slate-600 border-slate-200 hover:bg-slate-50 dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900'
+                  ? 'bg-[#F5B301] text-slate-950'
+                  : 'border border-slate-800 bg-slate-900/60 text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
               {st || 'All'}
@@ -246,54 +254,56 @@ export default function TripsPageContent() {
 
       <Card title="Trips List">
         {loading ? (
-          <div className="p-8 text-center text-sm text-slate-500">Loading trips...</div>
+          <div className="py-12 text-center text-xs text-slate-400">Loading trips...</div>
         ) : error ? (
-          <div className="p-8 text-center text-sm text-red-500">{error}</div>
+          <div className="py-12 text-center text-xs text-rose-400">{error}</div>
         ) : trips.length > 0 ? (
-          <Table columns={columns} data={trips} />
+          <div className="overflow-x-auto">
+            <Table columns={columns} data={trips} />
+          </div>
         ) : (
-          <div className="p-8 text-center text-sm text-slate-500">No trips matched the filter status.</div>
+          <div className="py-12 text-center text-xs text-slate-500">No trips matched the filter status.</div>
         )}
       </Card>
 
       {/* CREATE TRIP MODAL */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-950">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Create New Trip</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-800 bg-[#0b0f19] p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-white">Create New Trip</h3>
             <form onSubmit={handleCreateSubmit} className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Source</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Source</label>
                   <input
                     type="text"
                     required
                     placeholder="Source city"
                     value={createForm.source}
                     onChange={(e) => setCreateForm({ ...createForm, source: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Destination</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Destination</label>
                   <input
                     type="text"
                     required
                     placeholder="Destination city"
                     value={createForm.destination}
                     onChange={(e) => setCreateForm({ ...createForm, destination: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Assign Driver</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Assign Driver</label>
                 <select
                   required
                   value={createForm.driverId}
                   onChange={(e) => setCreateForm({ ...createForm, driverId: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white focus:border-[#F5B301] focus:outline-none"
                 >
                   <option value="">Select an available driver</option>
                   {availableDrivers.map(d => (
@@ -303,12 +313,12 @@ export default function TripsPageContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Assign Vehicle</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Assign Vehicle</label>
                 <select
                   required
                   value={createForm.vehicleId}
                   onChange={(e) => setCreateForm({ ...createForm, vehicleId: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white focus:border-[#F5B301] focus:outline-none"
                 >
                   <option value="">Select an available vehicle</option>
                   {availableVehicles.map(v => (
@@ -317,9 +327,9 @@ export default function TripsPageContent() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Cargo Weight (kg)</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Cargo (kg)</label>
                   <input
                     type="number"
                     step="any"
@@ -327,11 +337,11 @@ export default function TripsPageContent() {
                     placeholder="e.g. 500"
                     value={createForm.cargoWeight}
                     onChange={(e) => setCreateForm({ ...createForm, cargoWeight: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Planned Dist. (km)</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Planned (km)</label>
                   <input
                     type="number"
                     step="any"
@@ -339,24 +349,30 @@ export default function TripsPageContent() {
                     placeholder="e.g. 350"
                     value={createForm.plannedDistance}
                     onChange={(e) => setCreateForm({ ...createForm, plannedDistance: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500">Revenue (₹)</label>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Revenue (₹)</label>
                   <input
                     type="number"
                     step="any"
                     placeholder="e.g. 15000"
                     value={createForm.revenue}
                     onChange={(e) => setCreateForm({ ...createForm, revenue: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" className="bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700" onClick={() => setShowCreateModal(false)}>Cancel</Button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800"
+                >
+                  Cancel
+                </button>
                 <Button type="submit">Create Trip</Button>
               </div>
             </form>
@@ -366,12 +382,12 @@ export default function TripsPageContent() {
 
       {/* COMPLETE TRIP MODAL */}
       {showCompleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-950">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Complete Dispatched Trip</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0b0f19] p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-white">Complete Dispatched Trip</h3>
             <form onSubmit={handleCompleteSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500">Actual Distance (km)</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Actual Distance (km)</label>
                 <input
                   type="number"
                   step="any"
@@ -379,12 +395,12 @@ export default function TripsPageContent() {
                   placeholder="e.g. 362"
                   value={completeForm.actualDistance}
                   onChange={(e) => setCompleteForm({ ...completeForm, actualDistance: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Fuel Consumed (L)</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Fuel Consumed (L)</label>
                 <input
                   type="number"
                   step="any"
@@ -392,12 +408,12 @@ export default function TripsPageContent() {
                   placeholder="e.g. 42"
                   value={completeForm.fuelConsumed}
                   onChange={(e) => setCompleteForm({ ...completeForm, fuelConsumed: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Final Odometer (km)</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Final Odometer (km)</label>
                 <input
                   type="number"
                   step="any"
@@ -405,25 +421,36 @@ export default function TripsPageContent() {
                   placeholder="e.g. 120500"
                   value={completeForm.finalOdometer}
                   onChange={(e) => setCompleteForm({ ...completeForm, finalOdometer: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500">Final Revenue (₹) - Optional</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Final Revenue (₹) - Optional</label>
                 <input
                   type="number"
                   step="any"
                   placeholder="Leave empty to keep planned revenue"
                   value={completeForm.revenue}
                   onChange={(e) => setCompleteForm({ ...completeForm, revenue: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-sm focus:outline-none dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:border-[#F5B301] focus:outline-none"
                 />
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" className="bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700" onClick={() => setShowCompleteModal(false)}>Cancel</Button>
-                <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">Submit Completion</Button>
+                <button
+                  type="button"
+                  onClick={() => setShowCompleteModal(false)}
+                  className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-4 py-2 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/30 transition"
+                >
+                  Submit Completion
+                </button>
               </div>
             </form>
           </div>

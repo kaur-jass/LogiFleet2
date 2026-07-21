@@ -60,12 +60,18 @@ export const getDrivers = async (query) => {
     ];
   }
 
-  return await prisma.driver.findMany({
+  console.log("Query:", where);
+
+  const drivers = await prisma.driver.findMany({
     where,
     orderBy: {
       createdAt: "desc",
     },
   });
+
+  console.log("Drivers found:", drivers);
+
+  return drivers;
 };
 
 // ==============================

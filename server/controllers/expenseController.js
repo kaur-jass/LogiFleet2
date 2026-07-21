@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import { successResponse, errorResponse } from "../utils/response.js";
+import { createNotification } from "../services/notificationService.js";
 
 // GET /api/expenses
 export const getExpenses = async (req, res) => {
@@ -56,6 +57,15 @@ export const createExpense = async (req, res) => {
         date,
         description: description || null,
       },
+    });
+
+    await createNotification({
+      title: "Expense Added",
+      message: `${type} expense of ₹${amount} added for ${vehicle.regNumber}.`,
+      type: "EXPENSE",
+      priority: "LOW",
+      actionUrl: `/expenses?expenseId=${expense.id}`,
+      entityId: expense.id,
     });
 
     return successResponse(res, { expense }, 201);

@@ -2,7 +2,7 @@ export default function Button({ children, type = 'button', className = '', ...p
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center rounded-3xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={`inline-flex items-center justify-center rounded-xl bg-[#F5B301] px-4 py-2.5 text-xs font-semibold text-slate-950 transition hover:bg-[#e0a200] focus:outline-none focus:ring-2 focus:ring-[#F5B301]/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       {...props}
     >
       {children}

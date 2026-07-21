@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import { successResponse, errorResponse } from "../utils/response.js";
+import { createNotification } from "../services/notificationService.js";
 
 // GET /api/fuel-logs
 export const getFuelLogs = async (req, res) => {
@@ -76,6 +77,15 @@ export const createFuelLog = async (req, res) => {
       },
     });
 
+    await createNotification({
+      title: "Fuel Log Added",
+      message: `${liters} L fuel added for ${vehicle.regNumber}.`,
+      type: "FUEL",
+      priority: "LOW",
+      actionUrl: `/fuel?fuelId=${log.id}`,
+      entityId: log.id,
+    });
+    
     return successResponse(res, { log }, 201);
   } catch (error) {
     console.error("CreateFuelLog Error:", error);

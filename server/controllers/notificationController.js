@@ -12,8 +12,10 @@ export const getAllNotifications = async (req, res) => {
     const notifications = await getNotifications();
 
     return res.status(200).json({
-      success: true,
-      data: notifications,
+        success: true,
+        data: {
+            notifications,
+        },
     });
   } catch (error) {
     console.error("Get Notifications Error:", error);
@@ -30,8 +32,10 @@ export const getNotificationCount = async (req, res) => {
     const count = await getUnreadCount();
 
     return res.status(200).json({
-      success: true,
-      data: count,
+        success: true,
+        data: {
+            count,
+        },
     });
   } catch (error) {
     console.error("Unread Count Error:", error);

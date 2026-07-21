@@ -1,5 +1,5 @@
-import DriversPageContent from "../components/DriversPageContent";
+import VehiclesPageContent from "../components/VehiclesPageContent";
 
-export default function DriversPage() {
-  return <DriversPageContent />;
+export default function VehiclesPage() {
+  return <VehiclesPageContent />;
 }

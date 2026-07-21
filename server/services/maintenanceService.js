@@ -32,6 +32,9 @@ export const createMaintenance = async (data) => {
         description: data.description,
         cost: data.cost,
       },
+      include: {
+        vehicle: true,
+      },
     });
 
     await tx.vehicle.update({
@@ -102,15 +105,18 @@ export const closeMaintenance = async (id) => {
   }
 
   const result = await prisma.$transaction(async (tx) => {
-    const updatedLog = await tx.maintenanceLog.update({
-      where: {
-        id,
-      },
-      data: {
-        status: "CLOSED",
-        closedAt: new Date(),
-      },
-    });
+  const updatedLog = await tx.maintenanceLog.update({
+    where: {
+      id,
+    },
+    data: {
+      status: "CLOSED",
+      closedAt: new Date(),
+    },
+    include: {
+      vehicle: true,
+    },
+  });
 
     if (maintenance.vehicle.status !== "RETIRED") {
       await tx.vehicle.update({

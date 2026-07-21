@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Bell, Sun, Moon, Loader2, X, ChevronRight, Menu } from "lucide-react";
+import { Search, Sun, Moon, Loader2, X, ChevronRight, Menu } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { globalSearch } from "../services/searchService";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar({ onToggleSidebar }) {
   const { isDarkMode, setIsDarkMode } = useTheme();
@@ -241,18 +242,7 @@ export default function Navbar({ onToggleSidebar }) {
             {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          <button
-            type="button"
-            aria-label="Notifications"
-            className={`relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border transition-colors cursor-pointer ${
-              isDarkMode
-                ? "border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800"
-                : "border-slate-200 bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
-            }`}
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#F5B301]" />
-          </button>
+            <NotificationBell />
 
           <div
             className={`flex items-center gap-2 rounded-full border p-1 sm:px-3 sm:py-1.5 transition-colors ${

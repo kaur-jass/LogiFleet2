@@ -10,6 +10,9 @@ const TripsPage = React.lazy(() => import("../pages/TripsPage"));
 const FuelPage = React.lazy(() => import("../pages/FuelPage"));
 const ExpensesPage = React.lazy(() => import("../pages/ExpensesPage"));
 const ReportsPage = React.lazy(() => import("../pages/ReportsPage"));
+const DriversPage = React.lazy(() => import("../pages/DriversPage"));
+const VehiclesPage = React.lazy(() => import("../pages/VehiclesPage"));
+const MaintenancePage = React.lazy(() => import("../pages/MaintenancePage"));
 
 const router = createBrowserRouter([
   {
@@ -64,30 +67,30 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // {
-      //   path: "drivers",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <DriversPage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: "vehicles",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <VehiclesPage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: "maintenance",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <MaintenancePage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
+      {
+        path: "drivers",
+        element: (
+          <ProtectedRoute>
+            <DriversPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "vehicles",
+        element: (
+          <ProtectedRoute>
+            <VehiclesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "maintenance",
+        element: (
+          <ProtectedRoute>
+            <MaintenancePage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);
