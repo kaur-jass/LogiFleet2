@@ -73,6 +73,104 @@ export const getDashboardKpis = async (req, res) => {
       },
     });
 
+    const trips = await prisma.trip.findMany({
+      select: {
+        createdAt: true,
+      },
+    });
+
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const tripsPerMonth = monthNames.map((month) => ({
+      month,
+      trips: 0,
+    }));
+
+    trips.forEach((trip) => {
+      const monthIndex = new Date(trip.createdAt).getMonth();
+      tripsPerMonth[monthIndex].trips++;
+    });
+
+    const fuelLogs = await prisma.fuelLog.findMany({
+      select: {
+        liters: true,
+        date: true,
+      },
+    });
+
+    const fuelPerMonth = monthNames.map((month) => ({
+      month,
+      fuel: 0,
+    }));
+
+    fuelLogs.forEach((log) => {
+      const monthIndex = new Date(log.date).getMonth();
+      fuelPerMonth[monthIndex].fuel += log.liters;
+    });
+
+    const expenses = await prisma.expense.groupBy({
+      by: ["type"],
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const expenseDistribution = expenses.map((expense) => ({
+      category: expense.type,
+      amount: expense._sum.amount || 0,
+    }));
+
+
+    const completedTrips = await prisma.trip.findMany({
+      where: {
+        status: "COMPLETED",
+      },
+      select: {
+        revenue: true,
+        completedAt: true,
+      },
+    });
+
+    const expenseLogs = await prisma.expense.findMany({
+      select: {
+        amount: true,
+        date: true,
+      },
+    });
+
+    const revenueExpense = monthNames.map((month) => ({
+      month,
+      revenue: 0,
+      expense: 0,
+    }));
+
+    // Revenue
+    completedTrips.forEach((trip) => {
+      if (!trip.completedAt) return;
+
+      const month = new Date(trip.completedAt).getMonth();
+      revenueExpense[month].revenue += trip.revenue || 0;
+    });
+
+    // Expenses
+    expenseLogs.forEach((expense) => {
+      const month = new Date(expense.date).getMonth();
+      revenueExpense[month].expense += expense.amount;
+    });
+
     return successResponse(res, {
       activeVehicles,
       availableVehicles,
@@ -81,6 +179,10 @@ export const getDashboardKpis = async (req, res) => {
       pendingTrips,
       driversOnDuty,
       fleetUtilizationPct,
+      tripsPerMonth,
+      fuelPerMonth,
+      expenseDistribution,
+      revenueExpense,
     }, 200);
   } catch (error) {
     console.error("GetDashboardKpis Error:", error);

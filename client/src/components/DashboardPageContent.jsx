@@ -22,7 +22,6 @@ import Button from "./Button";
 import ChartContainer from "./ChartContainer";
 import Table from "./Table";
 import Badge from "./Badge";
-import { dashboardKpis } from "../services/mockData";
 import { getDashboardKpis } from "../services/dashboardService";
 import { getTrips } from "../services/tripService";
 import { getFuelLogs } from "../services/fuelService";
@@ -84,10 +83,10 @@ export default function DashboardPageContent() {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState("");
 
-  const chartData = useMemo(() => dashboardKpis.tripsPerMonth, []);
-  const fuelData = useMemo(() => dashboardKpis.fuelConsumption, []);
-  const expenseData = useMemo(() => dashboardKpis.expenseDistribution, []);
-  const revenueData = useMemo(() => dashboardKpis.revenueExpense, []);
+  const chartData = useMemo(() => kpis?.tripsPerMonth || [],[kpis]);
+  const fuelData = useMemo(() => kpis?.fuelPerMonth || [], [kpis]);
+  const expenseData = useMemo(() => kpis?.expenseDistribution || [],[kpis]);
+  const revenueData = useMemo(() => kpis?.revenueExpense || [], [kpis]);
 
   const gridColor = isDarkMode ? "#1e293b" : "#e2e8f0";
   const axisColor = isDarkMode ? "#64748b" : "#94a3b8";
@@ -249,8 +248,8 @@ export default function DashboardPageContent() {
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar
-                  dataKey="liters"
-                  name="Liters"
+                  dataKey="fuel"
+                  name="Fuel (L)"
                   fill="#f5b301"
                   radius={[6, 6, 0, 0]}
                 />
