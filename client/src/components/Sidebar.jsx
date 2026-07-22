@@ -216,7 +216,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
 
       {/* Desktop Fixed Sidebar */}
       <aside
-        className={`hidden w-64 shrink-0 border-r xl:block h-screen sticky top-0 transition-colors duration-300 ${
+        className={`hidden xl:flex xl:w-64 xl:flex-col xl:fixed xl:top-0 xl:left-0 xl:h-screen border-r transition-colors duration-300 ${
           isDarkMode
             ? "border-slate-800/80 bg-[#0a0f1d]"
             : "border-slate-200 bg-white"

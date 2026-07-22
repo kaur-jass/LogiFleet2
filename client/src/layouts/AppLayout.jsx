@@ -56,11 +56,11 @@ export default function AppLayout() {
         />
         
         {/* CRITICAL FIX: min-w-0 allows the flex item to contract properly */}
-        <div className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col xl:ml-64">
           <Navbar
             onToggleSidebar={() => setMobileOpen(true)}
           />
-          <main className="flex-1 w-full max-w-full min-w-0 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             <Suspense fallback={<PageLoader />}>
               <Outlet />
             </Suspense>
